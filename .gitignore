@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# Dados e modelos: o conteúdo NÃO vai para o Git, mas os ponteiros do DVC (*.dvc) vão.
+# As pastas precisam continuar "visíveis" (!/data/**/) para que o Git consiga enxergar o
+# .dvc lá dentro: ignorar a pasta inteira esconderia a exceção junto (Etapa 3).
+/data/**
+!/data/**/
+!/data/**/*.dvc
+!/data/**/.gitkeep
+/models/**
+!/models/**/
+!/models/**/*.dvc
+!/models/**/.gitkeep
+
+# MLflow local
+mlruns/
+mlartifacts/
+
+# SO / editor
+.DS_Store
+.vscode/
+.idea/

@@ -1,0 +1,67 @@
+[tool.poetry]
+name = "tc-mle-fase2"
+version = "0.1.0"
+description = "Propensão de compra em e-commerce: pipeline de ML reprodutível (Poetry, DVC, MLflow, Docker)"
+authors = ["Luca Stephan"]
+readme = "README.md"
+packages = [{ include = "purchase_propensity", from = "src" }]
+
+[tool.poetry.dependencies]
+python = ">=3.12,<3.13"
+pandas = "^3.0.6"
+
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.17.0"
+pytest = "^9.1.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+# --- Lint ------------------------------------------------------------------
+# O critério "Clean code e Estrutura" (20%) cobra naming, type hints e legibilidade.
+# Cada um tem aqui uma regra que FALHA no CI, para que a entrega prove em vez de afirmar
+# (D01-A1, decision log §1).
+[tool.ruff]
+line-length = 90
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "E", "W",   # pycodestyle
+    "F",        # pyflakes: import morto, variável não usada
+    "I",        # isort: ordem de imports estável entre máquinas
+    "N",        # pep8-naming: snake_case, CapWords, CONSTANTES
+    "UP",       # pyupgrade
+    "B",        # bugbear: default mutável e afins
+    "SIM",      # simplificações
+    "ANN",      # type hints em parâmetro E retorno: requisito nominal do enunciado
+    "D",        # docstrings: requisito nominal do enunciado
+    "C90",      # complexidade ciclomática
+    "PL",       # pylint: tamanho de função, nº de argumentos
+    "ERA",      # código comentado: código morto que alguém pode "religar"
+    "PD",       # pandas-vet
+    # RUF100 acusa `# noqa` que não suprime nada. Um noqa é uma afirmação sobre esta
+    # configuração; sem RUF100, ninguém verifica a afirmação (achado do M03-A06, Fase 1).
+    "RUF",
+]
+ignore = [
+    "D100",     # docstring de módulo: o nome do arquivo + a docstring das funções bastam
+    "D104",     # docstring de pacote: idem, para __init__.py
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+# Testes são lidos pelo nome (`test_alvo_nao_entra_nas_features`). Exigir type hint e
+# docstring neles duplicaria o nome sem acrescentar informação.
+"tests/**" = ["ANN", "D", "PLR2004"]
+
+# --- Testes ----------------------------------------------------------------
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q --strict-markers"
+filterwarnings = ["error"]
