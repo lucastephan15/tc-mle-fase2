@@ -70,6 +70,12 @@ derruba** (estrutura, Poetry, lint, esquema do dado). O desenho do pipeline espe
 ⚠️ **Pendente para a Etapa 2:** a máquina tem o **Poetry 1.8.4**, e o `pyproject.toml` está no formato
 `[tool.poetry]`. Se a D02 ensinar o Poetry 2 (`[project]`, PEP 621), migrar o formato e **fixar
 a versão do Poetry** no CI e no Dockerfile.
+**Atualização em 20/10 (D02-A2):** a aula ensina o formato 1.x, mas o critério real é o Poetry que o
+avaliador instala, hoje o **2.5.1**. Testado num clone limpo: `poetry install` e testes verdes,
+`poetry check --lock` com 5 warnings de deprecação (`[tool.poetry.name] is deprecated. Use
+[project.name] instead`, e o mesmo para os outros quatro campos). Migração para `[project]` simulada:
+check limpo, nenhuma versão de pacote muda, lock 2.0 → 2.1 (ilegível para o 1.8 ⇒ trocar o pino do
+CI no mesmo commit). **Decisão pendente.**
 
 ## §2 — Etapa 2 · Ambiente e Dependências
 
