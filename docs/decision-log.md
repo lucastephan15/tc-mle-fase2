@@ -67,19 +67,15 @@ derruba** (estrutura, Poetry, lint, esquema do dado). O desenho do pipeline espe
 | 2026-10-12 | **Teste de contrato esquema × CSV com `skipif`** se o arquivo não existir | o CSV não está no Git até o `dvc add`. ⚠️ **Teste pulado é afirmação não verificada:** quando o DVC entrar (Etapa 3), o CI faz `dvc pull` e o `skipif` **sai** | sem teste contra o dado real |
 | 2026-10-20 | **`extend-ignore-names = ["X", "X_*"]` no pep8-naming** | a D01-A7 (pág. 8) recomenda `X_train`/`y_test`, a convenção do sklearn, e o `N` reprova (`N803` no argumento `X`, `N806` na variável `X_train`, verificado com uma sonda). A exceção é pontual: `Data` e `Xtrain` continuam reprovando | `ignore = ["N803", "N806"]` (desliga o naming de variável inteiro, que é item do critério); `x_train` minúsculo (briga com o vocabulário do sklearn e da banca) |
 
-⚠️ **Pendente para a Etapa 2:** a máquina tem o **Poetry 1.8.4**, e o `pyproject.toml` está no formato
-`[tool.poetry]`. Se a D02 ensinar o Poetry 2 (`[project]`, PEP 621), migrar o formato e **fixar
-a versão do Poetry** no CI e no Dockerfile.
-**Atualização em 20/10 (D02-A2):** a aula ensina o formato 1.x, mas o critério real é o Poetry que o
-avaliador instala, hoje o **2.5.1**. Testado num clone limpo: `poetry install` e testes verdes,
-`poetry check --lock` com 5 warnings de deprecação (`[tool.poetry.name] is deprecated. Use
-[project.name] instead`, e o mesmo para os outros quatro campos). Migração para `[project]` simulada:
-check limpo, nenhuma versão de pacote muda, lock 2.0 → 2.1 (ilegível para o 1.8 ⇒ trocar o pino do
-CI no mesmo commit). **Decisão pendente.**
+✅ ~~Pendente para a Etapa 2: Poetry 1.8.4 e formato `[tool.poetry]`~~ → resolvido em 20/10, ver §2.
 
 ## §2 — Etapa 2 · Ambiente e Dependências
 
-*(a preencher)*
+| Data | Decisão | Por quê | Alternativa descartada |
+|---|---|---|---|
+| 2026-10-20 | **Poetry 2.5.1 e metadados em `[project]` (PEP 621)**; `[tool.poetry]` só com `packages` e o grupo dev; `poetry-core>=2,<3` no build-system | o avaliador instala o Poetry atual (2.x). **Testado num clone limpo com o 2.5.1 e o formato antigo:** `poetry install` funcionava, mas `poetry check --lock` dava 5 warnings de deprecação (`[tool.poetry.name] is deprecated. Use [project.name] instead`…), o que pesa num critério que diz "uso correto do Poetry". `[project]` também é o padrão aberto que qualquer ferramenta lê (D02-A2, pág. 5). Na migração **nenhuma versão de pacote mudou**, só o formato do lock (2.0 → 2.1) | manter o 1.8.4 e o `[tool.poetry]`, que a D02-A2 ensina mas que o Poetry atual marca como deprecado |
+| 2026-10-20 | **Pino do Poetry no CI trocado no mesmo commit** (`pipx install poetry==2.5.1`) | o lock 2.1 não é lido pelo Poetry 1.8, então o CI quebraria se ficasse no pino antigo. O Dockerfile (Etapa 3) usa o mesmo pino | deixar o CI sem pino (o formato do lock mudaria sem ninguém perceber) |
+| 2026-10-20 | Não citar `poetry shell` na documentação | saiu no Poetry 2.0 (a D02-A2 ainda ensina). O substituto é `poetry env activate`, e o README já usa `poetry run`/`make`, que não dependem de ativar o venv | — |
 
 ## §3 — Etapa 3 · Containerização e Versionamento
 

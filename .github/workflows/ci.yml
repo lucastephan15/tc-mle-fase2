@@ -15,6 +15,6 @@ jobs:
           python-version: "3.12"
       # Mesma versão do Poetry da máquina de desenvolvimento: o formato do poetry.lock
       # depende dela.
-      - run: pipx install poetry==1.8.4
+      - run: pipx install poetry==2.5.1
       - run: poetry install --no-interaction
       - run: make ci
