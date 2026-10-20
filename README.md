@@ -6,6 +6,26 @@ comportamento de navegação ([Online Shoppers Purchasing Intention](https://arc
 
 > 🚧 Em construção. Execução individual.
 
+## Paradigma: funcional nos estágios, objetos onde há estado
+
+Cada estágio do pipeline (`prepare`, `train`, `evaluate`) tem um núcleo de funções puras, testável
+sem arquivo, e um `main()` curto que lê os parâmetros, carrega os dados, chama o núcleo e grava o
+resultado. I/O e MLflow ficam só no `main()`.
+
+A divisão em pipeline de dados, treino e avaliação é a mesma de um desenho com classes
+`DataPipeline`, `ModelTrainer` e `ModelEvaluator`. A diferença é o veículo: o DVC roda cada estágio
+num processo próprio, então um objeto não sobreviveria de um estágio para o outro, e o estado passa
+por arquivos versionados (`outs` → `deps`).
+
+Orientação a objetos entra onde o estado é real:
+
+- o modelo é um `Pipeline` do scikit-learn, com o pré-processamento ajustado dentro dele;
+- os estimadores são intercambiáveis por `fit`/`predict` (Strategy), escolhidos por nome no
+  `params.yaml` a partir de um dicionário de construtores (Factory);
+- os parâmetros são carregados uma vez para uma `dataclass` imutável e validados na carga.
+
+Não há herança no projeto.
+
 ## Como rodar
 
 ```bash
