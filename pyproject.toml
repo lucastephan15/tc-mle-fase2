@@ -52,6 +52,12 @@ ignore = [
     "D104",     # docstring de pacote: idem, para __init__.py
 ]
 
+# `X`/`X_train` é a convenção do scikit-learn (matriz maiúscula, vetor minúsculo) e a que a
+# D01-A7 recomenda. O pep8-naming reprovaria (N803/N806). A exceção cobre só esses nomes, e o
+# resto do naming continua verificado (`Data`, `Xtrain` ainda reprovam).
+[tool.ruff.lint.pep8-naming]
+extend-ignore-names = ["X", "X_*"]
+
 [tool.ruff.lint.pydocstyle]
 convention = "google"
 

@@ -65,6 +65,7 @@ derruba** (estrutura, Poetry, lint, esquema do dado). O desenho do pipeline espe
 | 2026-10-12 | **venv dentro do projeto** (`poetry.toml`: `virtualenvs.in-project = true`, versionado) | o caminho do venv fica previsível para `Makefile`, IDE e CI. Mesmo assim o `Makefile` usa `poetry run`, para não depender do shell (falso positivo do ruff global na Fase 1) | venv no cache global do Poetry |
 | 2026-10-12 | **pandas 3** (`^3.0.6`) | projeto novo não nasce preso à major anterior. O primeiro `poetry add` saiu com `^2.2` por descuido e foi corrigido no mesmo passo | pandas 2.x |
 | 2026-10-12 | **Teste de contrato esquema × CSV com `skipif`** se o arquivo não existir | o CSV não está no Git até o `dvc add`. ⚠️ **Teste pulado é afirmação não verificada:** quando o DVC entrar (Etapa 3), o CI faz `dvc pull` e o `skipif` **sai** | sem teste contra o dado real |
+| 2026-10-20 | **`extend-ignore-names = ["X", "X_*"]` no pep8-naming** | a D01-A7 (pág. 8) recomenda `X_train`/`y_test`, a convenção do sklearn, e o `N` reprova (`N803` no argumento `X`, `N806` na variável `X_train`, verificado com uma sonda). A exceção é pontual: `Data` e `Xtrain` continuam reprovando | `ignore = ["N803", "N806"]` (desliga o naming de variável inteiro, que é item do critério); `x_train` minúsculo (briga com o vocabulário do sklearn e da banca) |
 
 ⚠️ **Pendente para a Etapa 2:** a máquina tem o **Poetry 1.8.4**, e o `pyproject.toml` está no formato
 `[tool.poetry]`. Se a D02 ensinar o Poetry 2 (`[project]`, PEP 621), migrar o formato e **fixar
