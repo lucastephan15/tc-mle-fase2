@@ -17,6 +17,9 @@ __pycache__/
 !/models/**/*.dvc
 !/models/**/.gitkeep
 
+# Variáveis de ambiente: o .env real fica na máquina; o .env.example (sem segredo) vai para o Git
+.env
+
 # MLflow local
 mlruns/
 mlartifacts/

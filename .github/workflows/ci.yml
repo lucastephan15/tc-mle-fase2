@@ -10,9 +10,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      # Patch exato vem do .python-version, a fonte única (o mesmo do venv local e do
+      # Dockerfile). "3.12" pegaria o patch mais novo do runner (D02-A3, decision log §2).
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version-file: .python-version
       # Mesma versão do Poetry da máquina de desenvolvimento: o formato do poetry.lock
       # depende dela.
       - run: pipx install poetry==2.5.1
