@@ -81,7 +81,17 @@ derruba** (estrutura, Poetry, lint, esquema do dado). O desenho do pipeline espe
 
 ## §3 — Etapa 3 · Containerização e Versionamento
 
-*(a preencher)*
+| Data | Decisão | Por quê | Alternativa descartada |
+|---|---|---|---|
+| 2026-10-21 | **Dataset no DVC, fora do Git** (`dvc add data/raw/online_shoppers_intention.csv`) | é o que o enunciado pede. **Inverte deliberadamente o precedente da Fase 1**, que versionava o CSV no Git com SHA-256 no README. O SHA-256 conferido no `dvc add` bate com o do estudo de 28/09 (`b3055ee3…`). O bit de execução do arquivo foi removido antes, para o `.dvc` não registrar `isexec: true` | CSV no Git (Fase 1) |
+| 2026-10-21 | **Primeiro estágio se chama `prepare`, não `preprocess`** | o estágio só seleciona as colunas do esquema, converte o alvo para 0/1 e faz o split. Nada é ajustado nele: one-hot e escalonamento ficam no `Pipeline` do sklearn, no `train`, ajustados só no treino. O nome `preprocess` (o exemplo do enunciado) convidaria a encaixar o encoder aqui, antes do split, e é assim que o vazamento entra | `preprocess` com o encoder dentro |
+| 2026-10-21 | **Split estratificado treino/teste, `test_size: 0.2`, `seed: 42`; sem conjunto de validação; duplicadas mantidas** | estratificar mantém a prevalência (15,47% no treino, 15,49% no teste, medido). A validação é a CV do `train` sobre o treino, e o teste é tocado uma vez. As 125 duplicadas são sessões reais (estudo do dataset, §4.5) | split temporal (fica como limitação no README); remover duplicadas |
+| 2026-10-21 | **Saída em CSV** | o `schema.py` reaplica os tipos na leitura. Parquet preservaria os tipos, mas traria o `pyarrow`, que é pesado no lock e na imagem | Parquet |
+| 2026-10-21 | **`configs/params.yaml` carregado para `@dataclass(frozen=True)`** (`PrepareParams`), validado no `__post_init__` | mantém a regra de 12/10 (`configs/` guarda o que se ajusta sem mudar código). Chave digitada errada levanta `TypeError` e valor fora da faixa levanta `ValueError`, os dois **na carga**, antes de ler o dado (há testes para os dois). O custo é que o DVC procura `params.yaml` na raiz, então cada estágio declara `configs/params.yaml: [bloco]` | `params.yaml` na raiz; dicionário solto |
+| 2026-10-21 | **`deps` listam todo módulo que o estágio importa** (`prepare.py`, `params.py`, `schema.py`) e `params` lista só o bloco do estágio | um import fora da lista é dependência implícita: mudar uma coluna no `schema.py` não invalidaria o cache e o `dvc repro` devolveria o split antigo como atualizado. **Verificado:** trocar a seed faz o `dvc status` acusar `changed deps … prepare`, e `dvc repro -f` com a mesma seed gera um `dvc.lock` byte a byte igual (o split é determinístico) | listar só o script do estágio |
+| 2026-10-21 | **Estágio chamado por `[project.scripts]`** (`prepare = "purchase_propensity.prepare:main"`) | o mesmo nome serve ao `cmd` do `dvc.yaml`, ao README e ao container, e roda sem o Poetry no PATH (D02-A4) | `python -m purchase_propensity.prepare` |
+| 2026-10-21 | **`dvc` no grupo principal**, junto com `scikit-learn` e `pyyaml` | o container executa o projeto com `dvc repro`, então o DVC é dependência de execução, não de desenvolvimento. Custo medido: o `poetry.lock` cresceu ~3.400 linhas com a árvore do DVC. A confirmação fica para o Dockerfile, quando o tamanho da imagem for medido | `dvc` no grupo dev |
+| 2026-10-21 | `core.analytics = false` no `.dvc/config` | o DVC manda telemetria por padrão, e ela iria junto com o repo para a máquina do avaliador | — |
 
 ## §4 — Etapa 4 · Modelagem, Registry e Entrega
 

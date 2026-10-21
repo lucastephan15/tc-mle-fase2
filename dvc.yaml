@@ -1,0 +1,17 @@
+# Pipeline do projeto. `dvc repro` só reexecuta o estágio cujas deps ou params mudaram, então
+# TODO arquivo de código que o estágio importa entra em `deps`: um import fora da lista seria
+# uma dependência implícita, e o DVC diria "up to date" sobre um resultado velho.
+stages:
+  prepare:
+    cmd: prepare
+    deps:
+      - data/raw/online_shoppers_intention.csv
+      - src/purchase_propensity/prepare.py
+      - src/purchase_propensity/params.py
+      - src/purchase_propensity/schema.py
+    params:
+      - configs/params.yaml:
+          - prepare
+    outs:
+      - data/processed/train.csv
+      - data/processed/test.csv

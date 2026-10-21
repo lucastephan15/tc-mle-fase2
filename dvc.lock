@@ -1,0 +1,35 @@
+schema: '2.0'
+stages:
+  prepare:
+    cmd: prepare
+    deps:
+    - path: data/raw/online_shoppers_intention.csv
+      hash: md5
+      md5: cc6ec1db03b4f10f8de52c56ff48b085
+      size: 1072063
+    - path: src/purchase_propensity/params.py
+      hash: md5
+      md5: be895a641cd75473525ecb21f9af66f1
+      size: 1460
+    - path: src/purchase_propensity/prepare.py
+      hash: md5
+      md5: c723cf67f30ea9df8cf95d47b1f44894
+      size: 2447
+    - path: src/purchase_propensity/schema.py
+      hash: md5
+      md5: 9fa099555ab2ca504bec45d022016d4b
+      size: 1362
+    params:
+      configs/params.yaml:
+        prepare:
+          test_size: 0.2
+          seed: 42
+    outs:
+    - path: data/processed/test.csv
+      hash: md5
+      md5: 8985945161cc746ec4d9e0b8b7f821e5
+      size: 222166
+    - path: data/processed/train.csv
+      hash: md5
+      md5: 2a95394b0e2c379c44bd5f346fc8c302
+      size: 887608

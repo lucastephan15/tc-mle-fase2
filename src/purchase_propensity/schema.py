@@ -7,6 +7,8 @@ importam daqui; nenhuma lista de colunas é redigitada em outro módulo.
 from pathlib import Path
 
 RAW_DATA_PATH = Path("data/raw/online_shoppers_intention.csv")
+TRAIN_DATA_PATH = Path("data/processed/train.csv")
+TEST_DATA_PATH = Path("data/processed/test.csv")
 
 TARGET_COLUMN = "Revenue"
 

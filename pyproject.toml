@@ -7,7 +7,18 @@ description = "Propensão de compra em e-commerce: pipeline de ML reprodutível 
 authors = [{ name = "Luca Stephan" }]
 readme = "README.md"
 requires-python = ">=3.12,<3.13"
-dependencies = ["pandas (>=3.0.6,<4.0.0)"]
+dependencies = [
+    "pandas (>=3.0.6,<4.0.0)",
+    "scikit-learn (>=1.9.1,<2.0.0)",
+    "pyyaml (>=6.0.3,<7.0.0)",
+    # Em produção porque o container executa o pipeline com `dvc repro` (decision log §3).
+    "dvc (>=3.67.1,<4.0.0)",
+]
+
+# Um executável por estágio do pipeline. O mesmo nome aparece no `cmd` do dvc.yaml, no
+# README e no container (D02-A4).
+[project.scripts]
+prepare = "purchase_propensity.prepare:main"
 
 [tool.poetry]
 packages = [{ include = "purchase_propensity", from = "src" }]

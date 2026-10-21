@@ -1,0 +1,6 @@
+# Todo número que muda um resultado do pipeline mora aqui. O dvc.yaml declara, por estágio,
+# quais chaves cada um lê: mudar uma delas invalida o cache só dos estágios afetados.
+
+prepare:
+  test_size: 0.2  # fração reservada ao teste, tocado uma única vez na Etapa 4
+  seed: 42

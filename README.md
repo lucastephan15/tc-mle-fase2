@@ -29,6 +29,27 @@ Não há herança no projeto.
 ## Como rodar
 
 ```bash
-make setup   # poetry install, a partir do poetry.lock
-make ci      # lint + testes
+make setup             # poetry install, a partir do poetry.lock
+make ci                # lint + testes
+poetry run dvc repro   # executa o pipeline
 ```
+
+> O remote do DVC ainda não está configurado, então o `dvc pull` não funciona num clone novo.
+
+## Pipeline
+
+```
++--------------------------------------------+
+| data/raw/online_shoppers_intention.csv.dvc |
++--------------------------------------------+
+                       *
+                  +---------+
+                  | prepare |
+                  +---------+
+```
+
+- **`prepare`**: seleciona as colunas do esquema, converte o alvo `Revenue` para 0/1 e separa
+  treino e teste (80/20, estratificado, seed em `configs/params.yaml`). Saída em
+  `data/processed/`. O enunciado usa `preprocess` como exemplo, mas este estágio não ajusta
+  nada: o one-hot e o escalonamento ficam dentro do `Pipeline` do scikit-learn, no `train`, e
+  são ajustados só no treino.
