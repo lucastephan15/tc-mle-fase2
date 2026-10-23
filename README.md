@@ -31,23 +31,43 @@ Não há herança no projeto.
 ```bash
 make setup             # poetry install, a partir do poetry.lock
 make ci                # lint + testes
+poetry run dvc update data/raw/online_shoppers_intention.zip.dvc   # baixa o dataset da UCI
 poetry run dvc repro   # executa o pipeline
 ```
 
-> O remote do DVC ainda não está configurado, então o `dvc pull` não funciona num clone novo.
+O dataset não fica num remote do DVC: ele é importado da UCI por `dvc import-url`, e o
+`.dvc` guarda a URL de origem e o MD5 do zip. Por isso, num clone novo, **o `dvc pull` falha**
+(*"No remote provided"*), e quem baixa o dado é o `dvc update`. O import é `frozen`: o dado só
+muda com um `dvc update` explícito, e se a UCI alterar o arquivo, o MD5 novo aparece no
+`git diff` do `.dvc`.
+
+Se a UCI estiver fora do ar, baixe o zip
+[da página do dataset](https://archive.ics.uci.edu/dataset/468/online+shoppers+purchasing+intention+dataset)
+para `data/raw/online_shoppers_intention.zip` e rode `dvc repro`. O CSV extraído tem de ter MD5
+`cc6ec1db03b4f10f8de52c56ff48b085`.
 
 ## Pipeline
 
 ```
 +--------------------------------------------+
-| data/raw/online_shoppers_intention.csv.dvc |
+| data/raw/online_shoppers_intention.zip.dvc |
 +--------------------------------------------+
+                       *
+                  +---------+
+                  | extract |
+                  +---------+
                        *
                   +---------+
                   | prepare |
                   +---------+
+                       *
+                  +-------+
+                  | train |
+                  +-------+
 ```
 
+- **`extract`**: grava o CSV de dentro do zip, byte a byte. É em Python, e não com `unzip`,
+  porque a imagem `python:*-slim` não traz o `unzip`.
 - **`prepare`**: seleciona as colunas do esquema, converte o alvo `Revenue` para 0/1 e separa
   treino e teste (80/20, estratificado, seed em `configs/params.yaml`). Saída em
   `data/processed/`. O enunciado usa `preprocess` como exemplo, mas este estágio não ajusta

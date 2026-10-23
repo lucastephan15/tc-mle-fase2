@@ -2,6 +2,16 @@
 # TODO arquivo de código que o estágio importa entra em `deps`: um import fora da lista seria
 # uma dependência implícita, e o DVC diria "up to date" sobre um resultado velho.
 stages:
+  # O zip chega por `dvc import-url` (data/raw/online_shoppers_intention.zip.dvc), não por
+  # remote: num clone limpo, `dvc update` baixa da UCI e este estágio extrai o CSV.
+  extract:
+    cmd: extract
+    deps:
+      - data/raw/online_shoppers_intention.zip
+      - src/purchase_propensity/extract.py
+      - src/purchase_propensity/schema.py
+    outs:
+      - data/raw/online_shoppers_intention.csv
   prepare:
     cmd: prepare
     deps:

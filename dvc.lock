@@ -17,8 +17,8 @@ stages:
       size: 2447
     - path: src/purchase_propensity/schema.py
       hash: md5
-      md5: 952a05906358325ad77040888120b25e
-      size: 1445
+      md5: 52b18e0431eee36c0a9ba8ac78b96aab
+      size: 1738
     params:
       configs/params.yaml:
         prepare:
@@ -50,8 +50,8 @@ stages:
       size: 3160
     - path: src/purchase_propensity/schema.py
       hash: md5
-      md5: 952a05906358325ad77040888120b25e
-      size: 1445
+      md5: 52b18e0431eee36c0a9ba8ac78b96aab
+      size: 1738
     - path: src/purchase_propensity/train.py
       hash: md5
       md5: c087b4c782af280896c3c54e744cd237
@@ -73,3 +73,23 @@ stages:
       hash: md5
       md5: 24e24bf21144c6ad5e7dc8034210ccb7
       size: 6865
+  extract:
+    cmd: extract
+    deps:
+    - path: data/raw/online_shoppers_intention.zip
+      hash: md5
+      md5: d835049e5f428f3b8cb8a6e6937f5537
+      size: 1072219
+    - path: src/purchase_propensity/extract.py
+      hash: md5
+      md5: bf3b92ac196f7eaea63b4214f7f6374a
+      size: 1150
+    - path: src/purchase_propensity/schema.py
+      hash: md5
+      md5: 52b18e0431eee36c0a9ba8ac78b96aab
+      size: 1738
+    outs:
+    - path: data/raw/online_shoppers_intention.csv
+      hash: md5
+      md5: cc6ec1db03b4f10f8de52c56ff48b085
+      size: 1072063

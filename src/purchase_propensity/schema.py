@@ -6,6 +6,10 @@ importam daqui; nenhuma lista de colunas é redigitada em outro módulo.
 
 from pathlib import Path
 
+# O zip vem da UCI por `dvc import-url` (decision log §3); o CSV é extraído dele pelo
+# estágio `extract`, com o mesmo MD5 que tinha quando era versionado por `dvc add`.
+RAW_ARCHIVE_PATH = Path("data/raw/online_shoppers_intention.zip")
+RAW_ARCHIVE_MEMBER = "online_shoppers_intention.csv"
 RAW_DATA_PATH = Path("data/raw/online_shoppers_intention.csv")
 TRAIN_DATA_PATH = Path("data/processed/train.csv")
 TEST_DATA_PATH = Path("data/processed/test.csv")

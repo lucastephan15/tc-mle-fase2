@@ -20,6 +20,7 @@ dependencies = [
 # Um executável por estágio do pipeline. O mesmo nome aparece no `cmd` do dvc.yaml, no
 # README e no container (D02-A4).
 [project.scripts]
+extract = "purchase_propensity.extract:main"
 prepare = "purchase_propensity.prepare:main"
 train = "purchase_propensity.train:main"
 

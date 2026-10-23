@@ -1,0 +1,12 @@
+md5: 61bbc9331b136d1c1f5777e0a005dff2
+frozen: true
+deps:
+- checksum: '166594748513681418809170773097295089996'
+  hash: md5
+  path: 
+    https://archive.ics.uci.edu/static/public/468/online+shoppers+purchasing+intention+dataset.zip
+outs:
+- md5: d835049e5f428f3b8cb8a6e6937f5537
+  size: 1072219
+  hash: md5
+  path: online_shoppers_intention.zip
