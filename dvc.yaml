@@ -15,3 +15,20 @@ stages:
     outs:
       - data/processed/train.csv
       - data/processed/test.csv
+  train:
+    cmd: train
+    deps:
+      - data/processed/train.csv
+      - src/purchase_propensity/train.py
+      - src/purchase_propensity/models.py
+      - src/purchase_propensity/params.py
+      - src/purchase_propensity/schema.py
+    params:
+      - configs/params.yaml:
+          - train
+    outs:
+      - models/model.joblib
+    metrics:
+      # cache: false = o JSON vai para o Git, legível no diff e no `dvc metrics diff`.
+      - metrics/cv.json:
+          cache: false

@@ -9,6 +9,8 @@ from pathlib import Path
 RAW_DATA_PATH = Path("data/raw/online_shoppers_intention.csv")
 TRAIN_DATA_PATH = Path("data/processed/train.csv")
 TEST_DATA_PATH = Path("data/processed/test.csv")
+MODEL_PATH = Path("models/model.joblib")
+CV_METRICS_PATH = Path("metrics/cv.json")
 
 TARGET_COLUMN = "Revenue"
 

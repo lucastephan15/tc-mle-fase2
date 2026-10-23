@@ -1,6 +1,12 @@
 import pytest
 
-from purchase_propensity.params import PARAMS_PATH, PrepareParams, load_prepare_params
+from purchase_propensity.params import (
+    PARAMS_PATH,
+    PrepareParams,
+    TrainParams,
+    load_prepare_params,
+    load_train_params,
+)
 
 
 def test_params_do_repositorio_carregam():
@@ -23,3 +29,25 @@ def test_chave_digitada_errada_falha_na_carga(tmp_path):
     path.write_text("prepare:\n  test_sise: 0.2\n  seed: 42\n", encoding="utf-8")
     with pytest.raises(TypeError):
         load_prepare_params(path)
+
+
+TRAIN_DEFAULTS = {
+    "model": "logistic_regression",
+    "use_page_values": True,
+    "min_frequency": 10,
+    "cv_folds": 5,
+    "seed": 42,
+}
+
+
+def test_params_de_train_do_repositorio_carregam():
+    assert isinstance(load_train_params(PARAMS_PATH), TrainParams)
+
+
+@pytest.mark.parametrize(
+    ("key", "value"),
+    [("model", "xgboost"), ("min_frequency", 0), ("cv_folds", 1), ("seed", -1)],
+)
+def test_train_params_invalidos_falham_na_carga(key, value):
+    with pytest.raises(ValueError, match=key):
+        TrainParams(**(TRAIN_DEFAULTS | {key: value}))

@@ -9,16 +9,16 @@ stages:
       size: 1072063
     - path: src/purchase_propensity/params.py
       hash: md5
-      md5: be895a641cd75473525ecb21f9af66f1
-      size: 1460
+      md5: 0dff0dcf5f6400f356d81391f72bfc57
+      size: 3160
     - path: src/purchase_propensity/prepare.py
       hash: md5
       md5: c723cf67f30ea9df8cf95d47b1f44894
       size: 2447
     - path: src/purchase_propensity/schema.py
       hash: md5
-      md5: 9fa099555ab2ca504bec45d022016d4b
-      size: 1362
+      md5: 952a05906358325ad77040888120b25e
+      size: 1445
     params:
       configs/params.yaml:
         prepare:
@@ -33,3 +33,43 @@ stages:
       hash: md5
       md5: 2a95394b0e2c379c44bd5f346fc8c302
       size: 887608
+  train:
+    cmd: train
+    deps:
+    - path: data/processed/train.csv
+      hash: md5
+      md5: 2a95394b0e2c379c44bd5f346fc8c302
+      size: 887608
+    - path: src/purchase_propensity/models.py
+      hash: md5
+      md5: 2ea8a00f3529505784eeda01e7d4bf69
+      size: 1598
+    - path: src/purchase_propensity/params.py
+      hash: md5
+      md5: 0dff0dcf5f6400f356d81391f72bfc57
+      size: 3160
+    - path: src/purchase_propensity/schema.py
+      hash: md5
+      md5: 952a05906358325ad77040888120b25e
+      size: 1445
+    - path: src/purchase_propensity/train.py
+      hash: md5
+      md5: c087b4c782af280896c3c54e744cd237
+      size: 4218
+    params:
+      configs/params.yaml:
+        train:
+          model: logistic_regression
+          use_page_values: true
+          min_frequency: 10
+          cv_folds: 5
+          seed: 42
+    outs:
+    - path: metrics/cv.json
+      hash: md5
+      md5: ec515cb4d8679f32ef6d9287309275cf
+      size: 111
+    - path: models/model.joblib
+      hash: md5
+      md5: 24e24bf21144c6ad5e7dc8034210ccb7
+      size: 6865

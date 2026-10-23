@@ -1,0 +1,6 @@
+{
+  "pr_auc_mean": 0.645667,
+  "pr_auc_std": 0.017057,
+  "roc_auc_mean": 0.894271,
+  "roc_auc_std": 0.006076
+}

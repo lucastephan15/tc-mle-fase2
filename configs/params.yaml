@@ -4,3 +4,10 @@
 prepare:
   test_size: 0.2  # fração reservada ao teste, tocado uma única vez na Etapa 4
   seed: 42
+
+train:
+  model: logistic_regression  # chave de MODEL_FACTORIES (models.py); a escolha final é da Etapa 4
+  use_page_values: true  # false = experimento sem o quase-vazamento (estudo do dataset, §4.1)
+  min_frequency: 10  # categoria com menos linhas no treino vira "infrequente" no one-hot
+  cv_folds: 5
+  seed: 42  # semente própria: mudar a CV não refaz o split do prepare
