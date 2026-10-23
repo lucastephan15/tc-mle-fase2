@@ -44,6 +44,7 @@ DVC+Pipeline 15% · Modelagem 10%.
 |---|---|---|---|
 | 2026-09-28 | **Kubernetes fica fora da entrega** | o enunciado oficial não menciona K8s em nenhuma das 8 páginas — nenhum requisito, nenhum peso. A promessa vinha do PDF de **abertura da fase**, que não é o documento avaliável | construir manifests/EKS para a entrega. Revisitar só se aparecer errata ou orientação no Discord |
 | 2026-09-28 | **Runbook em skill separada (`tech-challenge-f2`)** | a skill da Fase 1 tem 3.949 linhas sobre o pipeline de churn, com outros pesos e outra stack. O que é transferível (catálogo de armadilhas, pontos fracos) é referenciado por nome, não duplicado | estender a skill `tech-challenge` |
+| 2026-10-23 | **Sem API: a predição é um script batch** | orientação oficial no Discord da turma (23/10), respondendo à dúvida de outro grupo: *"não é necessário desenvolver uma API (como FastAPI ou Flask)… o foco central desta etapa é a engenharia de machine learning e a orquestração da infraestrutura"*. São aceitos um script (`predict.py`/`evaluate.py`) que carrega o artefato, prediz nos dados de teste e exibe ou salva o resultado, ou um notebook. Escolhido o script, que vira o estágio `evaluate` já previsto no §3: um notebook não entra no `dvc.yaml` e pesa contra o Clean Code (20%). Confirma também o `CMD` do container como job, não serviço | API FastAPI como na Fase 1; notebook de predição |
 
 ---
 
