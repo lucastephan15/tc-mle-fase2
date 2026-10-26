@@ -33,8 +33,11 @@ stages:
       - src/purchase_propensity/models.py
       - src/purchase_propensity/params.py
       - src/purchase_propensity/schema.py
+      - src/purchase_propensity/tracking.py
     params:
+      # `prepare` também: o split define o run, e os dois blocos vão para o MLflow.
       - configs/params.yaml:
+          - prepare
           - train
     outs:
       - models/model.joblib

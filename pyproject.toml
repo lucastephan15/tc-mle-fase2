@@ -15,6 +15,13 @@ dependencies = [
     "dvc (>=3.67.1,<4.0.0)",
     # Já vem com o scikit-learn, mas o train.py importa direto (decision log §3).
     "joblib (>=1.6.0,<2.0.0)",
+    # Completo, não o `mlflow-skinny`: o backend SQLite e o Registry precisam do SQLAlchemy.
+    "mlflow (>=3.17.2,<4.0.0)",
+    # Nada lê o `.env` sozinho, nem o MLflow nem o DVC: o `main()` carrega (decision log §4).
+    "python-dotenv (>=1.2.4,<2.0.0)",
+    # Lê commit e estado do código sem o binário `git`, que a imagem slim não tem. Já vinha
+    # com o DVC, mas o tracking.py importa direto (decision log §4).
+    "dulwich (>=1.2.17,<2.0.0)",
 ]
 
 # Um executável por estágio do pipeline. O mesmo nome aparece no `cmd` do dvc.yaml, no
@@ -86,4 +93,12 @@ convention = "google"
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q --strict-markers"
-filterwarnings = ["error"]
+filterwarnings = [
+    "error",
+    # Vem de dentro do MLflow (store SQLite), não do nosso código; sai quando o MLflow
+    # trocar a estratégia de carga. Filtrado pela mensagem, não pela categoria inteira.
+    "ignore:The ``noload`` loader strategy is deprecated:DeprecationWarning",
+    # Também interno: sai ao importar `mlflow.types.responses` (modelos de agente/chat),
+    # que o MLflow carrega ao inferir a assinatura de qualquer modelo.
+    "ignore:.*Any type hint is inferred as AnyType:UserWarning",
+]

@@ -20,7 +20,9 @@ __pycache__/
 # Variáveis de ambiente: o .env real fica na máquina; o .env.example (sem segredo) vai para o Git
 .env
 
-# MLflow local
+# MLflow local: o banco (padrão do MLflow 3) e os artefatos ficam na máquina. O avaliador
+# recria os runs com `dvc exp run`; o banco é binário e guarda caminhos absolutos.
+mlflow.db
 mlruns/
 mlartifacts/
 

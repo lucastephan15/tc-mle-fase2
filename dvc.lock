@@ -52,12 +52,19 @@ stages:
       hash: md5
       md5: 52b18e0431eee36c0a9ba8ac78b96aab
       size: 1738
+    - path: src/purchase_propensity/tracking.py
+      hash: md5
+      md5: 562efc1a9d1e63cfddfffffd3c8619cb
+      size: 5542
     - path: src/purchase_propensity/train.py
       hash: md5
-      md5: c087b4c782af280896c3c54e744cd237
-      size: 4218
+      md5: e0f357c51d6fce071cd93ae7e451c1a9
+      size: 4894
     params:
       configs/params.yaml:
+        prepare:
+          test_size: 0.2
+          seed: 42
         train:
           model: logistic_regression
           use_page_values: true

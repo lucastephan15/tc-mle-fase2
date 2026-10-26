@@ -1,12 +1,9 @@
-import numpy as np
 import pandas as pd
 import pytest
 
 from purchase_propensity.models import MODEL_FACTORIES
 from purchase_propensity.params import TrainParams
 from purchase_propensity.schema import (
-    BOOLEAN_FEATURES,
-    CATEGORICAL_FEATURES,
     NUMERIC_FEATURES,
     TARGET_COLUMN,
 )
@@ -16,8 +13,6 @@ from purchase_propensity.train import (
     cross_validate_pipeline,
     numeric_features,
 )
-
-N_ROWS = 200
 
 
 def make_params(**overrides) -> TrainParams:
@@ -29,18 +24,6 @@ def make_params(**overrides) -> TrainParams:
         "seed": 42,
     }
     return TrainParams(**(defaults | overrides))
-
-
-@pytest.fixture
-def train() -> pd.DataFrame:
-    rng = np.random.default_rng(0)
-    data = {col: rng.random(N_ROWS) for col in NUMERIC_FEATURES}
-    data |= {col: rng.integers(1, 5, N_ROWS) for col in CATEGORICAL_FEATURES[:4]}
-    data["Month"] = rng.choice(["Feb", "Mar", "May", "Nov"], N_ROWS)
-    data["VisitorType"] = rng.choice(["Returning_Visitor", "New_Visitor"], N_ROWS)
-    data |= {col: rng.random(N_ROWS) < 0.5 for col in BOOLEAN_FEATURES}
-    data[TARGET_COLUMN] = (rng.random(N_ROWS) < 0.3).astype(int)
-    return pd.DataFrame(data)
 
 
 def split_xy(data: pd.DataFrame) -> tuple[pd.DataFrame, pd.Series]:
@@ -58,7 +41,7 @@ def test_sem_page_values_remove_so_essa_coluna():
 def test_todo_candidato_ajusta_e_devolve_probabilidade(train, model):
     X, y = split_xy(train)
     proba = build_pipeline(make_params(model=model)).fit(X, y).predict_proba(X)
-    assert proba.shape == (N_ROWS, 2)
+    assert proba.shape == (len(train), 2)
 
 
 def test_page_values_nao_chega_ao_modelo_quando_desligado(train):

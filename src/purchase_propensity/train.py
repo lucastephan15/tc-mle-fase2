@@ -13,13 +13,18 @@ import json
 import joblib
 import numpy as np
 import pandas as pd
+from dotenv import load_dotenv
 from sklearn.compose import ColumnTransformer
 from sklearn.model_selection import StratifiedKFold, cross_validate
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
 from purchase_propensity.models import build_model
-from purchase_propensity.params import TrainParams, load_train_params
+from purchase_propensity.params import (
+    TrainParams,
+    load_prepare_params,
+    load_train_params,
+)
 from purchase_propensity.schema import (
     BOOLEAN_FEATURES,
     CATEGORICAL_FEATURES,
@@ -28,6 +33,12 @@ from purchase_propensity.schema import (
     NUMERIC_FEATURES,
     TARGET_COLUMN,
     TRAIN_DATA_PATH,
+)
+from purchase_propensity.tracking import (
+    ENV_PATH,
+    flatten_params,
+    log_training_run,
+    run_tags,
 )
 
 PAGE_VALUES = "PageValues"
@@ -103,7 +114,13 @@ def cross_validate_pipeline(
 
 
 def main() -> None:
-    """Valida o pipeline por CV, ajusta no treino inteiro e grava modelo e métricas."""
+    """Valida o pipeline por CV, ajusta no treino inteiro, grava e registra no MLflow.
+
+    O modelo em `models/` e o `cv.json` são as saídas que o DVC versiona; o run no MLflow
+    é o histórico que permite comparar execuções e escolher o campeão.
+    """
+    # Sem `override`: uma variável já definida no shell ou no container prevalece.
+    load_dotenv(ENV_PATH)
     params = load_train_params()
     train = pd.read_csv(TRAIN_DATA_PATH)
     X, y = train.drop(columns=TARGET_COLUMN), train[TARGET_COLUMN]
@@ -114,3 +131,10 @@ def main() -> None:
     joblib.dump(pipeline, MODEL_PATH)
     CV_METRICS_PATH.parent.mkdir(parents=True, exist_ok=True)
     CV_METRICS_PATH.write_text(json.dumps(metrics, indent=2) + "\n", encoding="utf-8")
+    log_training_run(
+        pipeline,
+        X,
+        params=flatten_params({"prepare": load_prepare_params(), "train": params}),
+        metrics=metrics,
+        tags=run_tags(TRAIN_DATA_PATH),
+    )
