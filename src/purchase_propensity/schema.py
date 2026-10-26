@@ -15,6 +15,7 @@ TRAIN_DATA_PATH = Path("data/processed/train.csv")
 TEST_DATA_PATH = Path("data/processed/test.csv")
 MODEL_PATH = Path("models/model.joblib")
 CV_METRICS_PATH = Path("metrics/cv.json")
+TEST_METRICS_PATH = Path("metrics/test.json")
 
 TARGET_COLUMN = "Revenue"
 

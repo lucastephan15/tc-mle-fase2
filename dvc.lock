@@ -7,6 +7,10 @@ stages:
       hash: md5
       md5: cc6ec1db03b4f10f8de52c56ff48b085
       size: 1072063
+    - path: src/purchase_propensity/models.py
+      hash: md5
+      md5: 2ea8a00f3529505784eeda01e7d4bf69
+      size: 1598
     - path: src/purchase_propensity/params.py
       hash: md5
       md5: 017971286ae73269e4448f72bddd092d
@@ -17,8 +21,8 @@ stages:
       size: 2447
     - path: src/purchase_propensity/schema.py
       hash: md5
-      md5: 52b18e0431eee36c0a9ba8ac78b96aab
-      size: 1738
+      md5: 38defaa2861f256b57a96ecd717072be
+      size: 1784
     params:
       configs/params.yaml:
         prepare:
@@ -50,8 +54,8 @@ stages:
       size: 5281
     - path: src/purchase_propensity/schema.py
       hash: md5
-      md5: 52b18e0431eee36c0a9ba8ac78b96aab
-      size: 1738
+      md5: 38defaa2861f256b57a96ecd717072be
+      size: 1784
     - path: src/purchase_propensity/tracking.py
       hash: md5
       md5: 7ea820d1e830c8c78232e335bd19fc3e
@@ -93,10 +97,34 @@ stages:
       size: 1150
     - path: src/purchase_propensity/schema.py
       hash: md5
-      md5: 52b18e0431eee36c0a9ba8ac78b96aab
-      size: 1738
+      md5: 38defaa2861f256b57a96ecd717072be
+      size: 1784
     outs:
     - path: data/raw/online_shoppers_intention.csv
       hash: md5
       md5: cc6ec1db03b4f10f8de52c56ff48b085
       size: 1072063
+  evaluate:
+    cmd: evaluate
+    deps:
+    - path: data/processed/test.csv
+      hash: md5
+      md5: 8985945161cc746ec4d9e0b8b7f821e5
+      size: 222166
+    - path: models/model.joblib
+      hash: md5
+      md5: 0ed590dfe6d076d24510b5e1d937e4e8
+      size: 382281
+    - path: src/purchase_propensity/evaluate.py
+      hash: md5
+      md5: 5485f8c81922b4bc6e34f8ab9a1a343c
+      size: 2078
+    - path: src/purchase_propensity/schema.py
+      hash: md5
+      md5: 38defaa2861f256b57a96ecd717072be
+      size: 1784
+    outs:
+    - path: metrics/test.json
+      hash: md5
+      md5: 3fda0168437236617a5b784985eccf8d
+      size: 71

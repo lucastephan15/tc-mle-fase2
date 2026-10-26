@@ -32,6 +32,9 @@ prepare = "purchase_propensity.prepare:main"
 train = "purchase_propensity.train:main"
 # Fora do dvc.yaml: escolhe entre os runs já feitos e registra o champion (decision log §4).
 promote = "purchase_propensity.promote:main"
+evaluate = "purchase_propensity.evaluate:main"
+# Fora do dvc.yaml: lê o modelo pelo alias do Registry, que não é `dep` (decision log §4).
+predict = "purchase_propensity.predict:main"
 
 [tool.poetry]
 packages = [{ include = "purchase_propensity", from = "src" }]

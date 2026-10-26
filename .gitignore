@@ -26,6 +26,9 @@ mlflow.db
 mlruns/
 mlartifacts/
 
+# Saída do `predict`: regenerável a partir do champion, como o modelo.
+/predictions/
+
 # SO / editor
 .DS_Store
 .vscode/

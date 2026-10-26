@@ -18,6 +18,8 @@ stages:
       - data/raw/online_shoppers_intention.csv
       - src/purchase_propensity/prepare.py
       - src/purchase_propensity/params.py
+      # O params.py importa o models.py (validação do nome do modelo).
+      - src/purchase_propensity/models.py
       - src/purchase_propensity/schema.py
     params:
       - configs/params.yaml:
@@ -44,4 +46,16 @@ stages:
     metrics:
       # cache: false = o JSON vai para o Git, legível no diff e no `dvc metrics diff`.
       - metrics/cv.json:
+          cache: false
+  # Lê o `model.joblib` (dep), e não o alias do Registry: mover o alias não invalidaria o
+  # cache. Sem params: nada aqui é escolhido, só medido (decision log §4).
+  evaluate:
+    cmd: evaluate
+    deps:
+      - data/processed/test.csv
+      - models/model.joblib
+      - src/purchase_propensity/evaluate.py
+      - src/purchase_propensity/schema.py
+    metrics:
+      - metrics/test.json:
           cache: false

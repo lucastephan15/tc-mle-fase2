@@ -1,9 +1,12 @@
-"""Fixtures compartilhadas pelos testes de `train` e `tracking`."""
+"""Fixtures compartilhadas pelos testes de `train`, `tracking`, `evaluate` e `predict`."""
 
 import numpy as np
 import pandas as pd
 import pytest
+from sklearn.pipeline import Pipeline
 
+from purchase_propensity import train as train_stage
+from purchase_propensity.params import TrainParams
 from purchase_propensity.schema import (
     BOOLEAN_FEATURES,
     CATEGORICAL_FEATURES,
@@ -24,3 +27,10 @@ def train() -> pd.DataFrame:
     data |= {col: rng.random(N_ROWS) < 0.5 for col in BOOLEAN_FEATURES}
     data[TARGET_COLUMN] = (rng.random(N_ROWS) < 0.3).astype(int)
     return pd.DataFrame(data)
+
+
+@pytest.fixture
+def fitted(train: pd.DataFrame) -> Pipeline:
+    params = TrainParams("logistic_regression", True, 10, 5, 7)
+    X, y = train.drop(columns=TARGET_COLUMN), train[TARGET_COLUMN]
+    return train_stage.build_pipeline(params).fit(X, y)
