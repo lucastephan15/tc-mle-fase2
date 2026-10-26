@@ -96,6 +96,22 @@ def current_champion(
     )
 
 
+def _version_for(client: MlflowClient, run_id: str, params: PromotionParams) -> str:
+    # Rodar de novo não duplica: se o run já tem versão (um rollback anterior, ou uma
+    # execução interrompida antes do alias), a versão existente é reaproveitada.
+    existing = client.search_model_versions(
+        f"name = '{params.model_name}' and run_id = '{run_id}'"
+    )
+    if existing:
+        return str(existing[0].version)
+    # O `models:/m-<id>` é resolvido pela URI global do `mlflow`, não pela do client:
+    # os dois precisam apontar para o mesmo banco (testado no 3.17.2).
+    (output,) = client.get_run(run_id).outputs.model_outputs
+    return str(
+        mlflow.register_model(f"models:/{output.model_id}", params.model_name).version
+    )
+
+
 def register_champion(
     client: MlflowClient,
     decision: PromotionDecision,
@@ -103,9 +119,6 @@ def register_champion(
     params: PromotionParams,
 ) -> str:
     """Registra o candidato (se ainda não estiver), grava a auditoria e move o alias.
-
-    Rodar de novo não duplica: se o run já tem versão (um rollback anterior, ou uma
-    execução interrompida antes do alias), a versão existente é reaproveitada.
 
     Args:
         client: Cliente apontado para o destino do `MLFLOW_TRACKING_URI`.
@@ -116,19 +129,7 @@ def register_champion(
     Returns:
         O número da versão que passou a ser o champion.
     """
-    run_id = decision.candidate.run_id
-    existing = client.search_model_versions(
-        f"name = '{params.model_name}' and run_id = '{run_id}'"
-    )
-    if existing:
-        version = existing[0].version
-    else:
-        # O `models:/m-<id>` é resolvido pela URI global do `mlflow`, não pela do client:
-        # os dois precisam apontar para o mesmo banco (testado no 3.17.2).
-        (output,) = client.get_run(run_id).outputs.model_outputs
-        model_uri = f"models:/{output.model_id}"
-        version = mlflow.register_model(model_uri, params.model_name).version
-
+    version = _version_for(client, decision.candidate.run_id, params)
     audit = {
         "approved_by": getpass.getuser(),
         "promoted_at": datetime.now(UTC).isoformat(timespec="seconds"),

@@ -88,6 +88,20 @@ def _describe(run: RunSummary) -> str:
     return f"{run.model} ({run.mean:.4f} ± {run.std:.4f}, run {run.run_id[:8]})"
 
 
+def _beats_all(
+    candidate: RunSummary, rivals: list[tuple[str, RunSummary]], margin: float
+) -> tuple[bool, list[str]]:
+    # Compara com todos os rivais, mesmo após uma derrota: cada um vira um motivo.
+    passed = True
+    verdicts = []
+    for label, rival in rivals:
+        beats = candidate.mean > rival.mean + margin
+        passed = passed and beats
+        verdict = "supera" if beats else "NÃO supera"
+        verdicts.append(f"{verdict} o {label} {_describe(rival)} + margem")
+    return passed, verdicts
+
+
 def decide_promotion(
     runs: Iterable[RunSummary],
     champion: RunSummary | None,
@@ -116,13 +130,8 @@ def decide_promotion(
 
     margin = params.margin_in_stds * candidate.std
     rivals = [("piso", baseline)] + ([("champion", champion)] if champion else [])
-    reasons = [f"candidato: {_describe(candidate)}; margem {margin:.4f}"]
-    passed = True
-    for label, rival in rivals:
-        beats = candidate.mean > rival.mean + margin
-        passed = passed and beats
-        verdict = "supera" if beats else "NÃO supera"
-        reasons.append(f"{verdict} o {label} {_describe(rival)} + margem")
+    passed, verdicts = _beats_all(candidate, rivals, margin)
+    reasons = [f"candidato: {_describe(candidate)}; margem {margin:.4f}", *verdicts]
     if champion is None:
         reasons.append("sem champion: primeira promoção, só o piso conta")
     return PromotionDecision(candidate, passed, tuple(reasons))
