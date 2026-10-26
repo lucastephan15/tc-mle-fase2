@@ -231,7 +231,9 @@ O registro completo das decisões, com as alternativas descartadas, está em
 - **Um ano de dados, sem split temporal.** A conversão tem pico em novembro, e o modelo não
   foi testado num período que não viu.
 - **`PageValues`** depende de como o Google Analytics atribui valor às páginas, então a relação
-  com a compra pode mudar sem nenhuma mudança de código. Ele fica no modelo; o experimento sem
+  com a compra pode mudar sem nenhuma mudança de código. É também um quase-vazamento: o valor
+  é calculado a partir das próprias transações
+  ([estudo do dataset](docs/estudo-dataset.md), §4.1). Ele fica no modelo; o experimento sem
   ele é `dvc exp run -f -S configs/params.yaml:train.use_page_values=false`.
 - **Registry local.** O champion existe no `mlflow.db` de quem roda os comandos; quem clona
   recria os runs e a promoção, não recebe os do autor.
@@ -249,4 +251,5 @@ tests/                     testes unitários, contra MLflow em SQLite temporári
                            do pipeline sobre tests/fixtures/
 Dockerfile, .dockerignore  imagem multi-stage via Poetry
 docs/decision-log.md       decisões, alternativas e porquês
+docs/estudo-dataset.md     dicionário das colunas, análise exploratória e armadilhas do dado
 ```
