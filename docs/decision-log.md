@@ -25,7 +25,7 @@ binária, dados tabulares. Foco declarado: **Engenharia de ML**, não complexida
 **Pesos:** Clean Code 20% · Reprodutibilidade 20% · MLflow+Registry 20% · Docker 15% ·
 DVC+Pipeline 15% · Modelagem 10%.
 
-### Decisões de abertura — 5 resolvidas em 28/09/2026, 3 em aberto
+### Decisões de abertura — todas resolvidas (a última, 0.8, em 26/10/2026)
 
 | # | Decisão | Resolução | Status |
 |---|---|---|---|
@@ -36,7 +36,7 @@ DVC+Pipeline 15% · Modelagem 10%.
 | 0.5 | **Poetry ou uv** | **Poetry**, desde o primeiro commit. O enunciado cita "(ou uv)" uma vez, mas o **entregável** diz `poetry install` e o **critério** diz "uso correto do Poetry". Requisito nominal ganha da preferência técnica (armadilha da Etapa 8-bis da Fase 1) | ✅ 12/10 |
 | 0.6 | **POO ou Funcional** | critério cobra "uso correto" de um dos dois ⇒ exige declarar qual. **Inclinação (D01-A5, 19/10):** núcleo funcional puro por estágio + `main()` imperativo fino (único I/O) + POO só onde há estado real (estimadores do sklearn, params como `frozen dataclass`). Porquê: o `dvc repro` reaproveita o cache quando `deps`/`params` não mudam, o que pressupõe transparência referencial; o contrato do estágio já mora no `dvc.yaml`, então uma classe por estágio duplicaria esse contrato. Descartado: uma classe por estágio (recomendação de 28/09). **Fechada em 20/10, depois da D01-A6**, que propõe `DataPipeline`/`ModelTrainer`/`ModelEvaluator`. As três responsabilidades viram os três estágios do DVC; como cada estágio roda em subprocesso, um objeto não atravessaria de um estágio para o outro, e o estado passa por arquivo versionado. Strategy = estimadores do sklearn intercambiáveis por `fit`/`predict`; Factory = dicionário de construtores escolhido no `params.yaml`; nenhuma herança. Não esperar a D01-A7/A8: o argumento decisivo vem da stack, e embrulhar funções puras em classes depois é refatoração mecânica | ✅ 20/10 |
 | 0.7 | **Remote do DVC** | **Nenhum remote: o dataset vem da UCI por `dvc import-url`** (§3, 23/10). O critério era *"o avaliador clona e o dado chega"*. A pasta local não passa nesse teste, o S3 do Learner Lab tem credencial que expira, e o Google Drive exige OAuth do avaliador. O dado é público e tem 1 MB, então a fonte de verdade pode ser a própria UCI | ✅ 23/10 |
-| 0.8 | **Backend do MLflow e como o Registry fica visível ao avaliador** | SQLite (`mlflow.db`, como na Fase 1) × servidor | 🔴 decidir na Etapa 4 |
+| 0.8 | **Backend do MLflow e como o Registry fica visível ao avaliador** | **SQLite, sem servidor** (`mlflow.db` no host, `mlflow-docker.db` no container; os dois fora do Git). O Registry e o alias funcionam no SQLite sem servidor (testado no 3.17.2, D04-A4). O avaliador recria os runs e o champion com os comandos do README, e os vê pelo `mlflow ui` apontando para o banco, como descrito em "Como verificar o Registry". Um servidor exigiria hospedagem e credencial, sem acrescentar nada ao que é avaliado | ✅ 26/10 |
 
 ### Decisões já tomadas
 
