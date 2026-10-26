@@ -54,8 +54,8 @@ stages:
       size: 1738
     - path: src/purchase_propensity/tracking.py
       hash: md5
-      md5: 562efc1a9d1e63cfddfffffd3c8619cb
-      size: 5542
+      md5: 7ea820d1e830c8c78232e335bd19fc3e
+      size: 6127
     - path: src/purchase_propensity/train.py
       hash: md5
       md5: e0f357c51d6fce071cd93ae7e451c1a9
@@ -66,7 +66,7 @@ stages:
           test_size: 0.2
           seed: 42
         train:
-          model: logistic_regression
+          model: hist_gradient_boosting
           use_page_values: true
           min_frequency: 10
           cv_folds: 5
@@ -74,12 +74,12 @@ stages:
     outs:
     - path: metrics/cv.json
       hash: md5
-      md5: ec515cb4d8679f32ef6d9287309275cf
+      md5: aa6a764aaa91c36a16a7529bd5192007
       size: 111
     - path: models/model.joblib
       hash: md5
-      md5: 24e24bf21144c6ad5e7dc8034210ccb7
-      size: 6865
+      md5: 0ed590dfe6d076d24510b5e1d937e4e8
+      size: 382281
   extract:
     cmd: extract
     deps:

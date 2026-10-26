@@ -6,7 +6,7 @@ prepare:
   seed: 42
 
 train:
-  model: logistic_regression  # chave de MODEL_FACTORIES (models.py); a escolha final é da Etapa 4
+  model: hist_gradient_boosting  # chave de MODEL_FACTORIES; o champion v1, escolhido pelo `promote`
   use_page_values: true  # false = experimento sem o quase-vazamento (estudo do dataset, §4.1)
   min_frequency: 10  # categoria com menos linhas no treino vira "infrequente" no one-hot
   cv_folds: 5
