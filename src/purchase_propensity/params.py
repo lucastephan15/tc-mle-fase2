@@ -15,6 +15,7 @@ from purchase_propensity.models import MODEL_FACTORIES
 
 PARAMS_PATH = Path("configs/params.yaml")
 MIN_CV_FOLDS = 2
+METRIC_SUFFIX = "_mean"
 
 
 @dataclass(frozen=True)
@@ -69,6 +70,51 @@ class TrainParams:
         _check_seed(self.seed)
 
 
+@dataclass(frozen=True)
+class PromotionParams:
+    """Critério de promoção ao Registry, lido pelo comando `promote`.
+
+    Attributes:
+        model_name: Nome do modelo no Registry.
+        alias: Alias que aponta para a versão em uso.
+        metric: Média da CV usada na comparação (`cv_<métrica>_mean`).
+        baseline_model: Candidato que serve de piso, rodado no mesmo commit e dado.
+        margin_in_stds: Quantos desvios da CV do candidato ele precisa superar.
+    """
+
+    model_name: str
+    alias: str
+    metric: str
+    baseline_model: str
+    margin_in_stds: float
+
+    def __post_init__(self) -> None:
+        """Rejeita nome vazio, métrica sem desvio correspondente e margem negativa."""
+        for field_name in ("model_name", "alias"):
+            if not getattr(self, field_name).strip():
+                msg = f"{field_name} não pode ser vazio"
+                raise ValueError(msg)
+        if not (self.metric.startswith("cv_") and self.metric.endswith(METRIC_SUFFIX)):
+            msg = (
+                f"metric deve ser uma média da CV (cv_*{METRIC_SUFFIX}): {self.metric!r}"
+            )
+            raise ValueError(msg)
+        if self.baseline_model not in MODEL_FACTORIES:
+            msg = (
+                f"baseline_model deve ser um de {sorted(MODEL_FACTORIES)}: "
+                f"{self.baseline_model!r}"
+            )
+            raise ValueError(msg)
+        if self.margin_in_stds < 0:
+            msg = f"margin_in_stds não pode ser negativa: {self.margin_in_stds}"
+            raise ValueError(msg)
+
+    @property
+    def std_metric(self) -> str:
+        """Nome do desvio-padrão que acompanha a métrica no run."""
+        return self.metric.removesuffix(METRIC_SUFFIX) + "_std"
+
+
 def _check_seed(seed: int) -> None:
     if seed < 0:
         msg = f"seed deve ser não negativa, recebido {seed}"
@@ -101,3 +147,15 @@ def load_train_params(path: Path = PARAMS_PATH) -> TrainParams:
         Os parâmetros validados. Uma chave a mais ou a menos levanta `TypeError`.
     """
     return TrainParams(**_read_block(path, "train"))
+
+
+def load_promotion_params(path: Path = PARAMS_PATH) -> PromotionParams:
+    """Lê o bloco `promotion` do arquivo de parâmetros.
+
+    Args:
+        path: Caminho do YAML de parâmetros.
+
+    Returns:
+        Os parâmetros validados. Uma chave a mais ou a menos levanta `TypeError`.
+    """
+    return PromotionParams(**_read_block(path, "promotion"))

@@ -11,3 +11,13 @@ train:
   min_frequency: 10  # categoria com menos linhas no treino vira "infrequente" no one-hot
   cv_folds: 5
   seed: 42  # semente própria: mudar a CV não refaz o split do prepare
+
+# Critério de promoção ao Registry, commitado ANTES dos runs da entrega: a data do commit é
+# a prova de que a regra foi escrita antes de medir. Nenhum estágio do dvc.yaml lê este
+# bloco; quem lê é o comando `promote`, que roda fora do DVC (decision log §4).
+promotion:
+  model_name: purchase-propensity  # nome no Registry
+  alias: champion
+  metric: cv_pr_auc_mean  # chave do run; a mesma dos dois lados da comparação
+  baseline_model: dummy  # o piso é um run do mesmo commit e dado, não um número
+  margin_in_stds: 1.0  # o candidato supera piso e champion por mais que N desvios da CV dele

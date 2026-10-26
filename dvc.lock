@@ -9,8 +9,8 @@ stages:
       size: 1072063
     - path: src/purchase_propensity/params.py
       hash: md5
-      md5: 0dff0dcf5f6400f356d81391f72bfc57
-      size: 3160
+      md5: 017971286ae73269e4448f72bddd092d
+      size: 5281
     - path: src/purchase_propensity/prepare.py
       hash: md5
       md5: c723cf67f30ea9df8cf95d47b1f44894
@@ -46,8 +46,8 @@ stages:
       size: 1598
     - path: src/purchase_propensity/params.py
       hash: md5
-      md5: 0dff0dcf5f6400f356d81391f72bfc57
-      size: 3160
+      md5: 017971286ae73269e4448f72bddd092d
+      size: 5281
     - path: src/purchase_propensity/schema.py
       hash: md5
       md5: 52b18e0431eee36c0a9ba8ac78b96aab
