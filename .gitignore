@@ -23,6 +23,7 @@ __pycache__/
 # MLflow local: o banco (padrão do MLflow 3) e os artefatos ficam na máquina. O avaliador
 # recria os runs com `dvc exp run`; o banco é binário e guarda caminhos absolutos.
 mlflow.db
+mlflow-docker.db
 mlruns/
 mlartifacts/
 

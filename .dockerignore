@@ -1,0 +1,31 @@
+# A imagem recebe só pyproject.toml, poetry.lock, README.md e src/. O resto do projeto
+# entra por bind mount, então nada daqui precisa estar no contexto do build.
+
+# Ambiente local: o .venv do Mac é arm64 e tem caminhos do host.
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+
+# Segredos
+.env
+
+# Dados, modelos e resultados: entram pelo mount, versionados pelo DVC e pelo MLflow
+data/
+models/
+metrics/
+predictions/
+.dvc/cache/
+.dvc/tmp/
+mlflow.db
+mlflow-docker.db
+mlruns/
+mlartifacts/
+
+# Repositório e editor
+.git/
+.github/
+.vscode/
+.idea/
+.DS_Store
