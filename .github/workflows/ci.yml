@@ -20,3 +20,17 @@ jobs:
       - run: pipx install poetry==2.5.1
       - run: poetry install --no-interaction
       - run: make ci
+
+  # Prova o Dockerfile em x86_64 (a máquina de desenvolvimento é arm64): a imagem builda a
+  # partir do lock e executa o pipeline com `dvc repro`, sobre a amostra versionada em
+  # tests/fixtures/ no lugar do dado da UCI. O zip não existe aqui, então só os estágios
+  # depois do `extract` rodam.
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # UID do runner: o usuário da imagem precisa escrever no repositório montado.
+      - run: docker build --build-arg UID="$(id -u)" -t tc-mle-fase2:ci .
+      - run: cp tests/fixtures/online_shoppers_sample.csv data/raw/online_shoppers_intention.csv
+      - run: docker run --rm -v "$PWD":/app tc-mle-fase2:ci dvc repro --single-item prepare train evaluate
+      - run: cat metrics/cv.json metrics/test.json

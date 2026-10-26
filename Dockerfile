@@ -27,9 +27,12 @@ RUN poetry install --only main --no-interaction
 
 # --- runtime: venv + código, sem Poetry, usuário sem privilégio --------------------------
 FROM ${PYTHON_IMAGE} AS runtime
-# UID 1000 = o primeiro usuário na maioria dos Linux: com o bind mount, os arquivos gerados
-# saem com o dono de quem rodou, e não como root.
-RUN adduser --system --group --uid 1000 mluser \
+# UID do usuário da imagem = o dono do repositório no host, para que ele escreva no bind
+# mount e os arquivos gerados não saiam como root. 1000 é o primeiro usuário na maioria dos
+# Linux; outro UID entra com `--build-arg UID=$(id -u)`. Trocar só no `docker run --user`
+# não serve: sem entrada no /etc/passwd, o `dvc exp run` falha em `getpwuid()`.
+ARG UID=1000
+RUN adduser --system --group --uid ${UID} mluser \
     # O `dvc exp` usa o libgit2, que recusa repositório cujo dono não é o usuário do
     # processo. No bind mount o dono é o do host (no Docker Desktop, /app aparece como
     # root), e o `dvc exp run` falhava com "repository path '/app' is not owned by current
