@@ -108,7 +108,9 @@ docker run --rm -v "$PWD":/app tc-mle-fase2 predict
 - **Banco próprio do container:** dentro da imagem, `MLFLOW_TRACKING_URI` aponta para
   `mlflow-docker.db`, e não para o `mlflow.db` do host. O MLflow grava o caminho absoluto de
   cada artefato, e um banco usado pelos dois lados quebra nos dois. Para ver o Registry criado
-  pelo container: `poetry run mlflow ui --backend-store-uri sqlite:///mlflow-docker.db`.
+  pelo container: `poetry run mlflow ui --backend-store-uri sqlite:///mlflow-docker.db`. Runs,
+  métricas, versões e alias aparecem; os artefatos não abrem fora do container, porque o banco
+  aponta para `/app/mlruns`.
 
 O CI builda a imagem em x86_64 e roda o pipeline dentro dela sobre uma amostra de 200 linhas
 do dataset (`tests/fixtures/`), sem baixar nada da UCI.
