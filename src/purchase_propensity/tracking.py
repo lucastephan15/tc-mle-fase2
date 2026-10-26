@@ -35,6 +35,14 @@ UNAVAILABLE = "unavailable"
 # (D04-A6 §3). O dado também: vai como `data.md5`.
 CODE_PATHS = ("src/", "pyproject.toml", "poetry.lock", "dvc.yaml")
 INPUT_EXAMPLE_ROWS = 5
+# O MLflow 3 grava o modelo em skops, que recusa ao salvar tipo fora da lista de confiança
+# dele, e as árvores do RandomForest e do HistGradientBoosting estão fora. Os arquivos são
+# gerados por nós. A lista vai para o `MLmodel`, então o `load_model` também aceita. Só os
+# tipos revisados entram: o skops orienta a não confiar em tudo o que ele reportar.
+SKOPS_TRUSTED_TYPES = [
+    "sklearn.tree._tree.Tree",
+    "sklearn.ensemble._hist_gradient_boosting.predictor.TreePredictor",
+]
 
 
 def file_md5(path: Path) -> str:
@@ -148,6 +156,9 @@ def log_training_run(
                 "ignore", message="Hint: Inferred schema contains integer"
             )
             mlflow.sklearn.log_model(
-                pipeline, name="model", input_example=X.head(INPUT_EXAMPLE_ROWS)
+                pipeline,
+                name="model",
+                input_example=X.head(INPUT_EXAMPLE_ROWS),
+                skops_trusted_types=SKOPS_TRUSTED_TYPES,
             )
     return run.info.run_id

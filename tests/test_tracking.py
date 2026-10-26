@@ -9,6 +9,7 @@ from dulwich import porcelain
 from mlflow.tracking import MlflowClient
 
 from purchase_propensity import train as train_stage
+from purchase_propensity.models import MODEL_FACTORIES
 from purchase_propensity.params import PARAMS_PATH, PrepareParams, TrainParams
 from purchase_propensity.schema import MODEL_PATH, TARGET_COLUMN, TRAIN_DATA_PATH
 from purchase_propensity.tracking import (
@@ -17,6 +18,7 @@ from purchase_propensity.tracking import (
     file_md5,
     flatten_params,
     git_state,
+    log_training_run,
     run_tags,
 )
 
@@ -125,3 +127,18 @@ def test_main_registra_o_run_no_destino_do_env(
     np.testing.assert_allclose(
         logged.predict_proba(X), joblib.load(MODEL_PATH).predict_proba(X)
     )
+
+
+@pytest.mark.parametrize("model", sorted(MODEL_FACTORIES))
+def test_todo_candidato_e_logado_e_carregado(model, train, tmp_path, monkeypatch):
+    # O skops recusa ao salvar tipo fora da lista de confiança; o HGB quebrou só
+    # no `dvc exp run` da entrega. Um candidato novo precisa passar por aqui antes.
+    monkeypatch.setattr("mlflow.tracking._tracking_service.utils._tracking_uri", None)
+    monkeypatch.setenv("MLFLOW_TRACKING_URI", f"sqlite:///{tmp_path / 'mlflow.db'}")
+    X, y = train.drop(columns=TARGET_COLUMN), train[TARGET_COLUMN]
+    pipeline = train_stage.build_pipeline(TrainParams(model, True, 10, 5, 7)).fit(X, y)
+
+    run_id = log_training_run(pipeline, X, params={}, metrics={}, tags={})
+
+    logged = mlflow.sklearn.load_model(f"runs:/{run_id}/model")
+    np.testing.assert_allclose(logged.predict_proba(X), pipeline.predict_proba(X))
